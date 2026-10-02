@@ -110,6 +110,16 @@ describe('WraithNames', function () {
         'InvalidNameCharacter',
       );
     });
+    it('should reject names longer than 32 characters', async function () {
+      const { metaAddress, spendingWallet } = await makeMetaAddress(spendingKey1);
+      const longName = 'a'.repeat(33);
+      const sig = await signRegistration(spendingWallet, longName, metaAddress);
+
+      await expect(names.register(longName, metaAddress, sig)).to.be.revertedWithCustomError(
+        names,
+        'NameTooLong',
+      );
+    });
 
     it('should reject invalid signature (wrong signer)', async function () {
       const { metaAddress } = await makeMetaAddress(spendingKey1);
